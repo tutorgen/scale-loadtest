@@ -1,0 +1,38 @@
+<project name="scale-loadtest" default="agent-only">
+
+    <property name="grinder.location" location="C:\Users\Brian\Documents\Code\grinder-3.11" />
+    <property name="grinder.location.lib" location="${grinder.location}\lib" />
+
+
+    <target name="run" >
+
+        <parallel>
+            <sequential>
+                <java fork="true" classname="net.grinder.Console" >
+                    <classpath>
+                        <pathelement location="${grinder.location.lib}\grinder.jar" />
+                    </classpath>
+                </java>
+            </sequential>
+            <sequential>
+                <sleep seconds = "2" />
+                <java fork="true" classname="net.grinder.Grinder" >
+
+                    <classpath>
+                        <pathelement location="${grinder.location.lib}\grinder.jar" />
+                    </classpath>
+                </java>
+            </sequential>
+        </parallel>
+    </target>
+
+    <target name="agent-only" >
+
+        <java fork="true" classname="net.grinder.Grinder" >
+            <classpath>
+                <pathelement location="${grinder.location.lib}\grinder.jar" />
+            </classpath>
+        </java>
+
+    </target>
+</project>
