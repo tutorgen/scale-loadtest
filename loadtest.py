@@ -51,13 +51,75 @@ def submit_transaction_service(request):
     data = json.loads(result.getText())
     grinder.logger.info("store-transaction -- " + str(data["success"]))
     
+def add_problem_service(request):
+    body = {
+
+        "problem_name":"problem1",
+        "skills":[("skill1","model1")],
+        "tags":["a problem","tag"],
+
+    }
+    json_body = json.dumps(body)
     
+    result = request.POST("http://localhost:8000/problem-plugin/add-problem",json_body)
+    data = json.loads(result.getText())
+    grinder.logger.info("add-problem -- " + str(data["success"]))
+
+def set_learned_threshold_service(request):
+    body = {
+        "threshold":.5,
+    }
+    json_body = json.dumps(body)
+    
+    result = request.POST("http://localhost:8000/problem-plugin/set-learned-threshold",json_body)
+    data = json.loads(result.getText())
+    grinder.logger.info("set-learned-threshold -- " + str(data["success"]))
+
+def get_next_problem_service(request):
+    body = {
+        "current_problem_name":"problem1",
+        "student_id":"student1",
+    }
+    json_body = json.dumps(body)
+    
+    result = request.POST("http://localhost:8000/problem-plugin/get-next-problem",json_body)
+    data = json.loads(result.getText())
+    grinder.logger.info("get-next-problem -- " + str(data["success"]))
+
+def trace_service(request):
+    body = {
+        "skill":"skill1",
+        "student_id":"student1",
+        "correct":True
+    }
+    json_body = json.dumps(body)
+    
+    result = request.POST("http://localhost:8000/kt-plugin/trace",json_body)
+    data = json.loads(result.getText())
+    grinder.logger.info("trace -- " + str(data["success"]))
+    
+def skill_widget_service(request):
+    body = {
+        "skill":"skill1",
+        "student_id":"student1",
+        "correct":True
+    }
+    json_body = json.dumps(body)
+    
+    result = request.POST("http://localhost:8000/kt-plugin/trace",json_body)
+    data = json.loads(result.getText())
+    grinder.logger.info("skill-widget -- " + str(data["success"]))
 
 class TestRunner:
     # This method is called for every run.
     def __call__(self):
         # Per thread scripting goes here.
-        grinder.logger.info("Hello World")
+        grinder.logger.info("Starting test")
         login_service(request)
         submit_transaction_service(request)
+        add_problem_service(request)
+        set_learned_threshold_service(request)
+        get_next_problem_service(request)
+        trace_service(request)
+        skill_widget_service(request)
         logout_service(request)
