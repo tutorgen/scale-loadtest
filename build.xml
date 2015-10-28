@@ -1,7 +1,7 @@
 <project name="scale-loadtest" default="agent-only">
 
     <property name="grinder.location" location="C:\Users\Brian\Documents\Code\grinder-3.11" />
-    <property name="grinder.location.lib" location="${grinder.location}\lib" />
+    <property name="grinder.location.lib" location="${grinder.location}/lib" />
 
 
     <target name="run" >
@@ -10,7 +10,8 @@
             <sequential>
                 <java fork="true" classname="net.grinder.Console" >
                     <classpath>
-                        <pathelement location="${grinder.location.lib}\grinder.jar" />
+                        <pathelement location="${grinder.location.lib}/grinder.jar" />
+                        <pathelement location="lib/jyson-1.0.2" />
                     </classpath>
                 </java>
             </sequential>
@@ -19,7 +20,8 @@
                 <java fork="true" classname="net.grinder.Grinder" >
 
                     <classpath>
-                        <pathelement location="${grinder.location.lib}\grinder.jar" />
+                        <pathelement location="${grinder.location.lib}/grinder.jar" />
+                        <pathelement location="lib/jyson-1.0.2" />
                     </classpath>
                 </java>
             </sequential>
@@ -30,7 +32,8 @@
 
         <java fork="true" classname="net.grinder.Grinder" >
             <classpath>
-                <pathelement location="${grinder.location.lib}\grinder.jar" />
+                <pathelement location="${grinder.location.lib}/grinder.jar" />
+                <pathelement location="lib/jyson-1.0.2.jar" />
             </classpath>
         </java>
 
