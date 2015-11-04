@@ -8,6 +8,11 @@ from com.xhaus.jyson import JysonCodec as json
 
 import random
 from datetime import datetime
+import base64
+
+USERNAME = grinder.getProperties()["grinder.username"]
+PASSWORD = grinder.getProperties()["grinder.password"]
+WEBROOT = grinder.getProperties()["grinder.webroot"]
 
 test1 = Test(1, "Request resource")
 request = HTTPRequest()
@@ -16,34 +21,13 @@ test1.record(request)
 control = HTTPPluginControl.getConnectionDefaults()
 control.setDefaultHeaders([
     NVPair("Content-Type", "application/json"),
+    NVPair("Authorization", "Basic " + base64.b64encode('%s:%s' % (USERNAME,PASSWORD)).decode())
 ])
 
 student_ids = set()
 problems={}
 
 start_time = datetime.now().isoformat()
-
-USERNAME = grinder.getProperties()["grinder.username"]
-PASSWORD = grinder.getProperties()["grinder.password"]
-WEBROOT = grinder.getProperties()["grinder.webroot"]
-
-
-def login_service(request):
-    body = {
-        "username":USERNAME,
-        "password":PASSWORD
-    }
-    json_body = json.dumps(body)
-
-    result = request.POST(WEBROOT+"/service-login",json_body)
-    
-    data = json.loads(result.getText())
-    grinder.logger.info("login -- " + data["status"])
-    
-def logout_service(request):
-    result = request.POST(WEBROOT+"/service-logout")
-    data = json.loads(result.getText())
-    grinder.logger.info("logout -- " + data["status"])
     
 def submit_transaction_service(request):
     r = random.randint(0,2)
@@ -90,12 +74,12 @@ def add_problem_service(request):
         "tags":["a problem","tag"],
     }
     problems[problem_name]=body
-    
+
     json_body = json.dumps(body)
-    
+        
     result = request.POST(WEBROOT+"/problem-plugin/add-problem",json_body)
     data = json.loads(result.getText())
-    
+
     if data["success"] == False:
         grinder.logger.error("add-problem -- " +str(data["error"]))
     else:
@@ -175,11 +159,9 @@ class TestRunner:
     def __call__(self):
         # Per thread scripting goes here.
         grinder.logger.info("Starting test")
-        login_service(request)
         add_problem_service(request)
         submit_transaction_service(request)
         trace_service(request)
         set_learned_threshold_service(request)
         get_next_problem_service(request)
         skill_widget_service(request)
-        logout_service(request)
